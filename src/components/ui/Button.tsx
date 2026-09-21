@@ -24,7 +24,7 @@ const container: Record<Variant, string> = {
 };
 
 const labelColor: Record<Variant, string> = {
-  primary: "text-content-on-brand",
+  primary: "text-content-on-accent",
   secondary: "text-content",
   ghost: "text-content",
 };
@@ -58,7 +58,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "primary" ? colors["content-on-brand"] : colors.content}
+          color={variant === "primary" ? colors["content-on-accent"] : colors.content}
         />
       ) : icon}
       <Text

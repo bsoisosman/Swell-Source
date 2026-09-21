@@ -32,11 +32,19 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8d6de8ad-8042-4ce7-b13d-f2372e08f29e"
+      }
+    },
+    "owner": "kirthireddys-team"
   }
 }

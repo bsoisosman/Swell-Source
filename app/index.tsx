@@ -1,34 +1,44 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text } from "react-native";
+import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../src/components/ui/Button";
 
-export default function TokenCheck() {
+/**
+ * Entrance screen.
+ *
+ * The wordmark sits above centre, not dead centre — optical centre
+ * reads as balanced where true centre reads as low. The button sits
+ * in the lower third, inside comfortable thumb reach on a large
+ * phone, which is not where the Figma frame puts it.
+ */
+export default function Entrance() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView
-      className="flex-1 bg-surface"
-      contentContainerStyle={{
-        padding: 24,
-        paddingTop: insets.top + 24,
-        paddingBottom: insets.bottom + 24,
-      }}
+    <View
+      className="flex-1 bg-surface px-6"
+      style={{ paddingTop: insets.top, paddingBottom: insets.bottom + 24 }}
     >
-      <Text className="text-display text-content font-bold">Token check</Text>
-      <Text className="text-body text-content-muted mt-2">
-        Compare against Figma. Then check it again in dark mode.
+      <View className="flex-[3]" />
+
+      <Text
+        className="text-display text-content text-center font-bold"
+        accessibilityRole="header"
+        maxFontSizeMultiplier={1.3}
+      >
+        Swell
       </Text>
-      <View className="mt-8 gap-3">
-        <Button label="Save changes" variant="primary" />
-        <Button label="Cancel" variant="secondary" />
-        <Button label="Learn more" variant="ghost" size="sm" />
-        <Button label="Saving" loading />
+
+      <View className="flex-[2]" />
+
+      <View className="w-full max-w-[340px] self-center">
+        <Button
+          label="Let's get started"
+          variant="primary"
+          onPress={() => router.push("/sign-in")}
+        />
       </View>
-      <View className="mt-8 rounded-card border border-border bg-surface-raised p-6">
-        <Text className="text-heading text-content font-semibold">Surface</Text>
-        <Text className="text-body text-content-muted mt-2">
-          Check radius, border, and background against the design.
-        </Text>
-      </View>
-    </ScrollView>
+    </View>
   );
 }

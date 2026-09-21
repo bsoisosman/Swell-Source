@@ -1,0 +1,41 @@
+/* GENERATED - DO NOT EDIT.
+ * Source: src/theme/tokens.ts   Regenerate: npm run tokens
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #fafafa;
+  --color-content: #09090b;
+  --color-content-muted: #52525b;
+  --color-content-subtle: #a1a1aa;
+  --color-content-on-brand: #ffffff;
+  --color-border: #e4e4e7;
+  --color-border-strong: #a1a1aa;
+  --color-accent: #2b3442;
+  --color-accent-pressed: #151a21;
+  --color-danger: #dc2626;
+  --color-warning: #d97706;
+  --color-success: #16a34a;
+}
+
+.dark:root {
+  --color-surface: #09090b;
+  --color-surface-raised: #27272a;
+  --color-surface-sunken: #000000;
+  --color-content: #fafafa;
+  --color-content-muted: #a1a1aa;
+  --color-content-subtle: #52525b;
+  --color-content-on-brand: #09090b;
+  --color-border: #27272a;
+  --color-border-strong: #52525b;
+  --color-accent: #a8b2c1;
+  --color-accent-pressed: #e6e9ee;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-success: #4ade80;
+}

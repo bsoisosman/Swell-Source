@@ -1,44 +1,71 @@
-import { View, Text } from "react-native";
-import { useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Button } from "../src/components/ui/Button";
+import { useState } from "react";
+import { View, Text, ScrollView, Pressable } from "react-native";
+import { router } from "expo-router";
+import SearchBar from "../components/SearchBar";
+import LocationCard from "../components/LocationCard";
+import { mockLocations } from "../data/mockLocations";
 
-/**
- * Entrance screen.
- *
- * The wordmark sits above centre, not dead centre — optical centre
- * reads as balanced where true centre reads as low. The button sits
- * in the lower third, inside comfortable thumb reach on a large
- * phone, which is not where the Figma frame puts it.
- */
-export default function Entrance() {
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
+export default function HomeScreen() {
+  const [search, setSearch] = useState("");
+
+  const filtered = mockLocations.filter((location) =>
+    `${location.name} ${location.address}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   return (
-    <View
-      className="flex-1 bg-surface px-6"
-      style={{ paddingTop: insets.top, paddingBottom: insets.bottom + 24 }}
-    >
-      <View className="flex-[3]" />
-
-      <Text
-        className="text-display text-content text-center font-bold"
-        accessibilityRole="header"
-        maxFontSizeMultiplier={1.3}
+    <View className="flex-1 bg-[#f4f7f8]">
+      <ScrollView
+        contentContainerStyle={{ padding: 24, paddingTop: 60 }}
       >
-        Swell
-      </Text>
+        <Text className="text-4xl font-bold text-[#0c1953]">
+          Swell
+        </Text>
 
-      <View className="flex-[2]" />
+        <Text className="mt-2 text-base text-gray-500">
+          Understand the water around you.
+        </Text>
 
-      <View className="w-full max-w-[340px] self-center">
-        <Button
-          label="Let's get started"
-          variant="primary"
-          onPress={() => router.push("/sign-in")}
-        />
-      </View>
+        <View className="mt-6">
+          <SearchBar value={search} onChangeText={setSearch} />
+        </View>
+
+        <Pressable
+          onPress={() => router.push("/map")}
+          className="mt-4 items-center rounded-2xl bg-[#0c1953] p-4"
+        >
+          <Text className="font-semibold text-white">
+            Open Interactive Map
+          </Text>
+        </Pressable>
+
+        <Text className="mb-3 mt-8 text-xl font-bold text-[#0c1953]">
+          Locations
+        </Text>
+
+        {filtered.map((location) => (
+          <LocationCard
+            key={location.id}
+            location={location}
+            onPress={() =>
+              router.push({
+                pathname: "/location",
+                params: { id: location.id },
+              })
+            }
+          />
+        ))}
+
+        <Pressable
+          onPress={() => router.push("/settings")}
+          className="mt-6 rounded-2xl bg-white p-4"
+        >
+          <Text className="text-center font-semibold text-[#0c1953]">
+            Settings
+          </Text>
+        </Pressable>
+      </ScrollView>
     </View>
   );
 }

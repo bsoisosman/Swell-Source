@@ -10,17 +10,17 @@ export default function LocationScreen() {
     mockLocations.find((item) => item.id === id) ?? mockLocations[0];
 
   return (
-    <ScrollView className="flex-1 bg-[#f4f7f8]">
+    <ScrollView className="flex-1 bg-surface">
       <View className="p-6 pt-16">
         <Pressable onPress={() => router.back()}>
-          <Text className="font-semibold text-[#0c1953]">← Back</Text>
+          <Text className="font-semibold text-content">← Back</Text>
         </Pressable>
 
-        <Text className="mt-6 text-3xl font-bold text-[#0c1953]">
+        <Text className="mt-6 text-heading font-bold text-content">
           {location.name}
         </Text>
 
-        <Text className="mt-1 text-gray-500">
+        <Text className="mt-1 text-content-muted">
           {location.address}
         </Text>
 
@@ -31,11 +31,11 @@ export default function LocationScreen() {
           />
         </View>
 
-        <Text className="mt-8 text-xl font-bold text-[#0c1953]">
+        <Text className="mt-8 text-heading font-bold text-content">
           Overview
         </Text>
 
-        <Text className="mt-2 leading-6 text-gray-600">
+        <Text className="mt-2 leading-6 text-content-muted">
           {location.summary}
         </Text>
 
@@ -46,9 +46,9 @@ export default function LocationScreen() {
               params: { id: location.id },
             })
           }
-          className="mt-6 rounded-2xl bg-[#0c1953] p-4"
+          className="mt-6 rounded-control bg-accent p-4"
         >
-          <Text className="text-center font-semibold text-white">
+          <Text className="text-center font-semibold text-content-on-accent">
             View Risk Details
           </Text>
         </Pressable>
@@ -60,9 +60,9 @@ export default function LocationScreen() {
               params: { id: location.id },
             })
           }
-          className="mt-3 rounded-2xl bg-white p-4"
+          className="mt-3 rounded-card bg-surface-raised p-4"
         >
-          <Text className="text-center font-semibold text-[#0c1953]">
+          <Text className="text-center font-semibold text-content-on-raised">
             View Sources
           </Text>
         </Pressable>

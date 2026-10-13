@@ -15,15 +15,15 @@ export default function HomeScreen() {
   );
 
   return (
-    <View className="flex-1 bg-[#f4f7f8]">
+    <View className="flex-1 bg-surface">
       <ScrollView
         contentContainerStyle={{ padding: 24, paddingTop: 60 }}
       >
-        <Text className="text-4xl font-bold text-[#0c1953]">
+        <Text className="text-display font-bold text-content">
           Swell
         </Text>
 
-        <Text className="mt-2 text-base text-gray-500">
+        <Text className="mt-2 text-body text-content-muted">
           Understand the water around you.
         </Text>
 
@@ -33,14 +33,14 @@ export default function HomeScreen() {
 
         <Pressable
           onPress={() => router.push("/map")}
-          className="mt-4 items-center rounded-2xl bg-[#0c1953] p-4"
+          className="mt-4 items-center rounded-control bg-accent p-4"
         >
-          <Text className="font-semibold text-white">
+          <Text className="font-semibold text-content-on-accent">
             Open Interactive Map
           </Text>
         </Pressable>
 
-        <Text className="mb-3 mt-8 text-xl font-bold text-[#0c1953]">
+        <Text className="mb-3 mt-8 text-heading font-bold text-content">
           Locations
         </Text>
 
@@ -59,9 +59,9 @@ export default function HomeScreen() {
 
         <Pressable
           onPress={() => router.push("/settings")}
-          className="mt-6 rounded-2xl bg-white p-4"
+          className="mt-6 rounded-card bg-surface-raised p-4"
         >
-          <Text className="text-center font-semibold text-[#0c1953]">
+          <Text className="text-center font-semibold text-content-on-raised">
             Settings
           </Text>
         </Pressable>

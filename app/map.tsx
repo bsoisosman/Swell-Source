@@ -1,61 +1,131 @@
-import { View, Text, Pressable } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import type { Region } from "react-native-maps";
 import { router } from "expo-router";
-import { mockLocations } from "../data/mockLocations";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { fetchMapSources } from "../src/lib/mapSources";
+import type { MapSource } from "../src/lib/mapSources";
+import { useTheme } from "../src/theme/useTheme";
+
+// Orange County. Where the data is densest and the demo starts.
+const START: Region = {
+  latitude: 33.7, longitude: -117.83,
+  latitudeDelta: 1.2, longitudeDelta: 1.2,
+};
 
 export default function MapScreen() {
+  const insets = useSafeAreaInsets();
+  const { colors, isDark } = useTheme();
+  const mapRef = useRef<MapView>(null);
+
+  const [sources, setSources] = useState<MapSource[]>([]);
+  const [selected, setSelected] = useState<MapSource | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // Markers must stop re-rasterising once painted, or the map
+  // stutters badly. See the note in the Marker below.
+  const [tracking, setTracking] = useState(true);
+
+  const load = useCallback(async () => {
+    try {
+      setSources(await fetchMapSources());
+      setTracking(true);
+      setTimeout(() => setTracking(false), 800);
+    } catch {
+      setError("Couldn't load water systems");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
   return (
     <View className="flex-1 bg-surface">
-      <View className="absolute left-5 right-5 top-16 z-10">
+      <MapView
+        ref={mapRef}
+        style={{ flex: 1 }}
+        initialRegion={START}
+        userInterfaceStyle={isDark ? "dark" : "light"}
+        showsMyLocationButton={false}
+        toolbarEnabled={false}
+      >
+        {sources.map((s) => (
+          <Marker
+            key={s.id}
+            coordinate={{ latitude: s.latitude, longitude: s.longitude }}
+            onPress={() => setSelected(s)}
+            // Must go false after first paint: left true, React
+            // Native re-rasterises every custom marker every frame.
+            tracksViewChanges={tracking}
+            accessibilityLabel={s.name}
+          >
+            <View
+              className="w-8 h-8 rounded-full items-center justify-center border-2"
+              style={{ backgroundColor: colors.accent, borderColor: colors.surface }}
+            >
+              <Text className="text-caption font-bold" style={{ color: colors["content-on-accent"] }}>
+                {s.risk_score ?? "?"}
+              </Text>
+            </View>
+          </Marker>
+        ))}
+      </MapView>
+
+      <View
+        className="absolute left-5 right-5 flex-row items-center"
+        style={{ top: insets.top + 8 }}
+        pointerEvents="box-none"
+      >
         <Pressable
           onPress={() => router.back()}
-          className="mb-4 w-24 rounded-control bg-surface-raised p-3"
+          className="rounded-control bg-surface-raised px-4 py-3"
+          accessibilityRole="button"
         >
-          <Text className="text-center font-semibold text-content-on-raised">
-            Back
-          </Text>
+          <Text className="font-semibold text-content-on-raised">← Back</Text>
         </Pressable>
 
-        <View className="rounded-card bg-surface-raised p-4">
-          <Text className="text-body font-bold text-content-on-raised">
-            Search the map
-          </Text>
-          <Text className="mt-1 text-content-on-raised-muted">
-            Select a location to view its Swell score.
-          </Text>
+        {loading ? (
+          <View className="ml-3 rounded-control bg-surface-raised px-4 py-3">
+            <ActivityIndicator size="small" color={colors["content-on-raised"]} />
+          </View>
+        ) : (
+          <View className="ml-3 rounded-control bg-surface-raised px-4 py-3">
+            <Text className="text-caption text-content-on-raised">
+              {sources.length} systems
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {error ? (
+        <View className="absolute left-5 right-5 rounded-card bg-surface-raised p-4"
+              style={{ top: insets.top + 70 }}>
+          <Text className="text-caption text-danger">{error}</Text>
         </View>
-      </View>
+      ) : null}
 
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-5xl">🗺️</Text>
-        <Text className="mt-3 text-heading font-bold text-content">
-          California
-        </Text>
-        <Text className="mt-1 text-content-muted">
-          Interactive map coming next
-        </Text>
-      </View>
-
-      <View className="absolute bottom-8 left-5 right-5">
-        {mockLocations.map((location) => (
-          <Pressable
-            key={location.id}
-            onPress={() =>
-              router.push({
-                pathname: "/location",
-                params: { id: location.id },
-              })
-            }
-            className="mb-2 rounded-card bg-surface-raised p-4"
-          >
-            <Text className="font-bold text-content-on-raised">
-              {location.name}
-            </Text>
-            <Text className="text-content-on-raised-muted">
-              Risk Score: {location.riskScore}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      {selected ? (
+        <Pressable
+          onPress={() => router.push({ pathname: "/location", params: { id: selected.id } })}
+          className="absolute left-5 right-5 rounded-card bg-surface-raised p-5"
+          style={{ bottom: insets.bottom + 20 }}
+        >
+          <Text className="text-body font-bold text-content-on-raised" numberOfLines={2}>
+            {selected.name}
+          </Text>
+          <Text className="mt-1 text-caption text-content-on-raised-muted">
+            {selected.county ? `${selected.county} County` : "California"}
+            {selected.population ? ` · ${selected.population.toLocaleString()} served` : ""}
+          </Text>
+          <Text className="mt-3 text-caption text-content-on-raised-muted">
+            {selected.risk_score != null
+              ? `Risk ${selected.risk_score}/100 — higher means more risk`
+              : "Not yet scored"}
+          </Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

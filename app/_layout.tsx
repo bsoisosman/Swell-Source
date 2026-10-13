@@ -8,7 +8,7 @@ import { useTheme } from "../src/theme/useTheme";
 import "../global.css";
 
 /** Routes reachable while signed out. Everything else is guarded. */
-const PUBLIC_ROUTES = ["index", "sign-in", "sign-up", "reset-password"];
+const PUBLIC_ROUTES = ["index","sign-in","sign-up","reset-password"];
 
 function Guard() {
   const { session, loading } = useAuth();
@@ -24,7 +24,7 @@ function Guard() {
     const current = segments[0] ?? "index";
     const onPublic = PUBLIC_ROUTES.includes(current);
 
-    if (session && onPublic) router.replace("/home");
+    if (session && onPublic) router.replace("/dashboard");
     else if (!session && !onPublic) router.replace("/");
   }, [session, loading, segments]);
 
